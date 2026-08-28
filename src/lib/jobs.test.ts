@@ -4,6 +4,7 @@ import {
   buildJobsQuery,
   formatJobType,
   formatSalary,
+  toExternalUrl,
   totalPages,
 } from "./jobs";
 
@@ -59,6 +60,22 @@ describe("formatJobType", () => {
 
   it("humanizes unknown types instead of failing", () => {
     expect(formatJobType("SEASONAL_WORK")).toBe("Seasonal work");
+  });
+});
+
+describe("toExternalUrl", () => {
+  it("leaves an absolute http(s) URL unchanged", () => {
+    expect(toExternalUrl("https://acme.io")).toBe("https://acme.io");
+    expect(toExternalUrl("http://acme.io")).toBe("http://acme.io");
+  });
+
+  it("prepends https:// when a scheme is missing", () => {
+    expect(toExternalUrl("acme.io")).toBe("https://acme.io");
+    expect(toExternalUrl("www.acme.io/careers")).toBe("https://www.acme.io/careers");
+  });
+
+  it("trims surrounding whitespace", () => {
+    expect(toExternalUrl("  acme.io  ")).toBe("https://acme.io");
   });
 });
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Building2, Check, Globe, MapPin } from "lucide-react";
 import { useJob } from "@/hooks/use-jobs";
 import { ApiError } from "@/lib/api-error";
-import { formatJobType, formatSalary } from "@/lib/jobs";
+import { formatJobType, formatSalary, toExternalUrl } from "@/lib/jobs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -143,7 +143,7 @@ export function JobDetail({ id }: { id: string }) {
               ) : null}
               {employer.website ? (
                 <a
-                  href={employer.website}
+                  href={toExternalUrl(employer.website)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-foreground underline underline-offset-4"

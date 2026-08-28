@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useJobs } from "@/hooks/use-jobs";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { JobCard } from "./job-card";
@@ -39,7 +40,9 @@ export function JobsBrowser() {
     location: searchParams.get("location") ?? "",
     jobType: searchParams.get("jobType") ?? "",
   };
-  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const rawPage = Number(searchParams.get("page"));
+  const page =
+    Number.isFinite(rawPage) && rawPage >= 1 ? Math.floor(rawPage) : 1;
 
   const query = useJobs({ ...filters, page });
 
@@ -47,7 +50,7 @@ export function JobsBrowser() {
     (next: Record<string, string | number | undefined>) => {
       const params = new URLSearchParams(searchParams.toString());
       for (const [key, value] of Object.entries(next)) {
-        if (value === undefined || value === "" || value === 0) {
+        if (value === undefined || value === "") {
           params.delete(key);
         } else {
           params.set(key, String(value));
@@ -94,8 +97,19 @@ export function JobsBrowser() {
         <div className="rounded-lg border border-dashed p-12 text-center">
           <p className="font-medium">No jobs found</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Try adjusting your search or filters.
+            {page > 1
+              ? "This page is empty — there may be fewer results than expected."
+              : "Try adjusting your search or filters."}
           </p>
+          {page > 1 ? (
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => goToPage(1)}
+            >
+              Back to first page
+            </Button>
+          ) : null}
         </div>
       ) : (
         <>

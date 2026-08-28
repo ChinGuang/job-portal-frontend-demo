@@ -50,6 +50,17 @@ export function totalPages(total: number, pageSize = JOBS_PAGE_SIZE): number {
   return Math.max(1, Math.ceil(total / pageSize));
 }
 
+/**
+ * Normalize a user-entered website into an absolute URL so it opens externally.
+ * A value lacking a scheme (e.g. "acme.io") would otherwise resolve relative to
+ * the current page; `https://` is prepended in that case.
+ */
+export function toExternalUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed) return trimmed;
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
 /** Human label for a job type, tolerant of unknown values from the backend. */
 export function formatJobType(type: string): string {
   if (JOB_TYPE_LABELS[type]) return JOB_TYPE_LABELS[type];
