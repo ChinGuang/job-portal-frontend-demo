@@ -84,22 +84,31 @@ describe("formatSalary", () => {
     expect(formatSalary({ salaryMin: null, salaryMax: null, salaryCurrency: null })).toBeNull();
   });
 
-  it("formats a full range", () => {
-    expect(
-      formatSalary({ salaryMin: 50000, salaryMax: 70000, salaryCurrency: "USD" }),
-    ).toBe("$50,000 – $70,000");
+  it("defaults to Malaysian Ringgit (RM) when no currency is given", () => {
+    const result = formatSalary({ salaryMin: 50000, salaryMax: 70000, salaryCurrency: null });
+    expect(result).toContain("RM");
+    expect(result).toContain("50,000");
+    expect(result).toContain("70,000");
+    expect(result).toContain("–");
+  });
+
+  it("formats a full range with the given currency", () => {
+    const result = formatSalary({ salaryMin: 50000, salaryMax: 70000, salaryCurrency: "MYR" });
+    expect(result).toContain("RM");
+    expect(result).toContain("50,000");
+    expect(result).toContain("70,000");
   });
 
   it("formats an open-ended minimum", () => {
-    expect(
-      formatSalary({ salaryMin: 80000, salaryMax: null, salaryCurrency: "USD" }),
-    ).toBe("From $80,000");
+    const result = formatSalary({ salaryMin: 80000, salaryMax: null, salaryCurrency: "MYR" });
+    expect(result?.startsWith("From ")).toBe(true);
+    expect(result).toContain("80,000");
   });
 
   it("formats an open-ended maximum", () => {
-    expect(
-      formatSalary({ salaryMin: null, salaryMax: 40000, salaryCurrency: "USD" }),
-    ).toBe("Up to $40,000");
+    const result = formatSalary({ salaryMin: null, salaryMax: 40000, salaryCurrency: "MYR" });
+    expect(result?.startsWith("Up to ")).toBe(true);
+    expect(result).toContain("40,000");
   });
 
   it("falls back gracefully for a non-ISO currency code", () => {

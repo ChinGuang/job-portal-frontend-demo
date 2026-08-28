@@ -4,6 +4,10 @@ import type { Job, JobType, Paginated } from "@/types/job";
 /** Listings requested per page of public browsing. */
 export const JOBS_PAGE_SIZE = 10;
 
+/** Locale and default currency for display formatting (Malaysia). */
+export const LOCALE = "en-MY";
+export const DEFAULT_CURRENCY = "MYR";
+
 /** Selectable job types for the browse filter, in display order. */
 export const JOB_TYPES: { value: JobType; label: string }[] = [
   { value: "FULL_TIME", label: "Full-time" },
@@ -75,17 +79,17 @@ export function formatSalary(job: SalaryFields): string | null {
   const { salaryMin, salaryMax } = job;
   if (salaryMin == null && salaryMax == null) return null;
 
-  const currency = job.salaryCurrency || "USD";
+  const currency = job.salaryCurrency || DEFAULT_CURRENCY;
   const format = (amount: number): string => {
     try {
-      return new Intl.NumberFormat("en-US", {
+      return new Intl.NumberFormat(LOCALE, {
         style: "currency",
         currency,
         maximumFractionDigits: 0,
       }).format(amount);
     } catch {
       // Fall back gracefully if the backend sends a non-ISO currency code.
-      return `${amount.toLocaleString("en-US")} ${currency}`;
+      return `${amount.toLocaleString(LOCALE)} ${currency}`;
     }
   };
 
