@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "./auth-provider";
 
@@ -13,14 +13,14 @@ import { useAuth } from "./auth-provider";
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (!loading && !session) {
-      const target = `/login?redirect=${encodeURIComponent(pathname)}`;
-      router.replace(target);
+      // Preserve the full path + query the user was headed to.
+      const here = window.location.pathname + window.location.search;
+      router.replace(`/login?redirect=${encodeURIComponent(here)}`);
     }
-  }, [loading, session, router, pathname]);
+  }, [loading, session, router]);
 
   if (loading) {
     return (

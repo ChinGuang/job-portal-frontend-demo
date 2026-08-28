@@ -22,12 +22,14 @@ function ProfileStatusCard({
   title,
   description,
   exists,
+  loading,
   href,
 }: {
   icon: typeof UserRound;
   title: string;
   description: string;
   exists: boolean;
+  loading: boolean;
   href: string;
 }) {
   return (
@@ -35,7 +37,9 @@ function ProfileStatusCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <Icon className="size-6 text-muted-foreground" aria-hidden />
-          {exists ? (
+          {loading ? (
+            <Skeleton className="h-5 w-20" />
+          ) : exists ? (
             <Badge variant="secondary" className="gap-1">
               <CheckCircle2 className="size-3.5" aria-hidden />
               Active
@@ -51,12 +55,16 @@ function ProfileStatusCard({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button
-          variant={exists ? "outline" : "default"}
-          render={<Link href={href} />}
-        >
-          {exists ? "Manage profile" : "Create profile"}
-        </Button>
+        {loading ? (
+          <Skeleton className="h-8 w-32" />
+        ) : (
+          <Button
+            variant={exists ? "outline" : "default"}
+            render={<Link href={href} />}
+          >
+            {exists ? "Manage profile" : "Create profile"}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
@@ -119,6 +127,7 @@ function DashboardContent() {
           title="Job seeker"
           description="Build a profile, upload a résumé, and apply to jobs."
           exists={capabilities.hasJobSeeker}
+          loading={isLoading}
           href="/onboarding"
         />
         <ProfileStatusCard
@@ -126,6 +135,7 @@ function DashboardContent() {
           title="Employer"
           description="Create a company profile and post job listings."
           exists={capabilities.hasEmployer}
+          loading={isLoading}
           href="/onboarding"
         />
       </div>
