@@ -36,7 +36,16 @@ function buildUrl(
 ): string {
   const base = baseUrl.replace(/\/+$/, "");
   const rel = path.startsWith("/") ? path : `/${path}`;
-  const url = new URL(`${base}${rel}`);
+  // Support both an absolute base (the default) and a relative one (e.g. "/api"
+  // for same-origin proxying): a relative base is resolved against the current
+  // origin in the browser, avoiding a `new URL` TypeError.
+  const isAbsolute = /^[a-z][a-z0-9+.-]*:\/\//i.test(base);
+  const resolveBase = isAbsolute
+    ? undefined
+    : typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost";
+  const url = new URL(`${base}${rel}`, resolveBase);
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined && value !== null) {
@@ -93,7 +102,19 @@ export async function apiFetch<T>(
 
   if (response.status === 204) return undefined as T;
   const text = await response.text();
-  return (text ? JSON.parse(text) : undefined) as T;
+  if (!text) return undefined as T;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    // A 2xx with a non-JSON body (proxy HTML page, truncated response) still
+    // reaches callers as the consistent ApiError contract rather than a raw
+    // SyntaxError.
+    throw new ApiError(
+      response.status,
+      "Received a non-JSON response from the server",
+      text,
+    );
+  }
 }
 
 /** Convenience verbs over {@link apiFetch}. */

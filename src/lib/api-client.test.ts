@@ -57,6 +57,14 @@ describe("apiFetch — URL building", () => {
     );
   });
 
+  it("resolves a relative base URL against the current origin", async () => {
+    const fetchMock = mockFetchOnce({ json: {} });
+    await apiFetch("/jobs", {}, "/api");
+    const [calledUrl] = fetchMock.mock.calls[0];
+    // jsdom origin is http://localhost:3000 by default.
+    expect(calledUrl).toBe(`${window.location.origin}/api/jobs`);
+  });
+
   it("serializes query params and skips nullish ones", async () => {
     const fetchMock = mockFetchOnce({ json: {} });
     await apiFetch(
@@ -118,6 +126,13 @@ describe("apiFetch — responses & errors", () => {
     mockFetchOnce({ json: { id: "1", title: "Dev" }, text: '{"id":"1","title":"Dev"}' });
     const result = await apiFetch<{ id: string; title: string }>("/jobs/1", {}, BASE);
     expect(result).toEqual({ id: "1", title: "Dev" });
+  });
+
+  it("throws an ApiError (not a raw SyntaxError) for a non-JSON 2xx body", async () => {
+    mockFetchOnce({ status: 200, ok: true, text: "<html>oops</html>" });
+    const error = (await apiFetch("/jobs", {}, BASE).catch((e) => e)) as ApiError;
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error.status).toBe(200);
   });
 
   it("returns undefined for a 204 No Content", async () => {
