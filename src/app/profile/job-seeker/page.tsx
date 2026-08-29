@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { RequireAuth } from "@/components/auth/require-auth";
+import { FileUploadField } from "@/components/profile/file-upload-field";
 import { JobSeekerForm } from "@/components/profile/job-seeker-form";
 import { useJobSeekerProfile } from "@/hooks/use-profiles";
+import { useUploadResume } from "@/hooks/use-uploads";
+import { RESUME_UPLOAD } from "@/lib/uploads";
 import {
   Card,
   CardContent,
@@ -18,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 function JobSeekerProfileContent() {
   const router = useRouter();
   const { data: profile, isLoading, isError, error } = useJobSeekerProfile();
+  const uploadResume = useUploadResume();
   const exists = Boolean(profile);
 
   return (
@@ -60,6 +64,25 @@ function JobSeekerProfileContent() {
           )}
         </CardContent>
       </Card>
+
+      {exists ? (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="text-base">Résumé</CardTitle>
+            <CardDescription>
+              Attach a résumé so employers can review your background.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FileUploadField
+              config={RESUME_UPLOAD}
+              preview="link"
+              currentUrl={profile?.resumeUrl}
+              mutation={uploadResume}
+            />
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }

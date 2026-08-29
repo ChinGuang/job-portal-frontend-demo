@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { EmployerForm } from "@/components/profile/employer-form";
+import { FileUploadField } from "@/components/profile/file-upload-field";
 import { useEmployerProfile } from "@/hooks/use-profiles";
+import { useUploadLogo } from "@/hooks/use-uploads";
+import { LOGO_UPLOAD } from "@/lib/uploads";
 import {
   Card,
   CardContent,
@@ -18,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 function EmployerProfileContent() {
   const router = useRouter();
   const { data: profile, isLoading, isError, error } = useEmployerProfile();
+  const uploadLogo = useUploadLogo();
   const exists = Boolean(profile);
 
   return (
@@ -60,6 +64,26 @@ function EmployerProfileContent() {
           )}
         </CardContent>
       </Card>
+
+      {exists ? (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="text-base">Company logo</CardTitle>
+            <CardDescription>
+              Upload a logo to display on your listings.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FileUploadField
+              config={LOGO_UPLOAD}
+              preview="image"
+              currentUrl={profile?.logoUrl}
+              mutation={uploadLogo}
+              note="backend endpoint pending"
+            />
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }

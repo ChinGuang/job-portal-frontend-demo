@@ -9,9 +9,11 @@ export interface JobSeekerProfile {
   phone: string;
   skills: string[];
   yearsOfExperience: number;
+  /** Set by the résumé upload endpoint; not part of the create/update form. */
+  resumeUrl?: string | null;
 }
 
-export type JobSeekerProfileInput = JobSeekerProfile;
+export type JobSeekerProfileInput = Omit<JobSeekerProfile, "resumeUrl">;
 
 // --- Employer profile -------------------------------------------------------
 
