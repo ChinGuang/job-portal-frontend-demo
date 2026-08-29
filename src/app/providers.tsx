@@ -14,6 +14,7 @@ import {
   setUnauthorizedHandler,
 } from "@/lib/unauthorized";
 import { AuthProvider, useAuth } from "@/components/auth/auth-provider";
+import { ActiveRoleProvider } from "@/components/profile/active-role-provider";
 
 function makeQueryClient(): QueryClient {
   // Any 401 from the backend means the token is missing/expired: hand off to the
@@ -59,7 +60,9 @@ function QueryProvider({ children }: { children: React.ReactNode }) {
   }, [signOut, router]);
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <ActiveRoleProvider>{children}</ActiveRoleProvider>
+    </QueryClientProvider>
   );
 }
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Briefcase, LogOut } from "lucide-react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { RoleSwitcher } from "@/components/profile/role-switcher";
 import { Button } from "@/components/ui/button";
 
 /** Primary top navigation shared across every page; auth-aware. */
@@ -26,6 +27,7 @@ export function SiteHeader() {
 
           {loading ? null : session ? (
             <>
+              <RoleSwitcher />
               <Link
                 href="/dashboard"
                 className="text-muted-foreground transition-colors hover:text-foreground"
