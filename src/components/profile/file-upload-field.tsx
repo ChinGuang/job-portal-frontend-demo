@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 
 interface UploadMutation {
   mutate: (file: File, options?: { onSuccess?: () => void }) => void;
+  reset: () => void;
   isPending: boolean;
   isError: boolean;
   isSuccess: boolean;
@@ -42,7 +43,9 @@ export function FileUploadField({
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const onChoose = (chosen: File | null) => {
+    // Clear any prior success/error feedback when a new file is picked.
     setValidationError(null);
+    mutation.reset();
     if (!chosen) {
       setFile(null);
       return;
@@ -152,7 +155,7 @@ export function FileUploadField({
             : "Upload failed."}
         </p>
       ) : null}
-      {mutation.isSuccess && !file ? (
+      {mutation.isSuccess && !file && !validationError ? (
         <p className="flex items-center gap-1.5 text-sm text-emerald-600 dark:text-emerald-400">
           <CheckCircle2 className="size-4" aria-hidden />
           Uploaded.

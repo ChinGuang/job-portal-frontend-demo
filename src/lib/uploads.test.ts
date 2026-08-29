@@ -35,6 +35,10 @@ describe("validateFile — résumé", () => {
     expect(validateFile(makeFile("cv.pdf", "", MB), RESUME_UPLOAD).ok).toBe(true);
   });
 
+  it("tolerates surrounding whitespace in the filename", () => {
+    expect(validateFile(makeFile("cv.pdf ", "", MB), RESUME_UPLOAD).ok).toBe(true);
+  });
+
   it("rejects an unsupported type with a clear message", () => {
     const result = validateFile(makeFile("photo.png", "image/png", MB), RESUME_UPLOAD);
     expect(result.ok).toBe(false);

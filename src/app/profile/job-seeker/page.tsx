@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { RequireAuth } from "@/components/auth/require-auth";
-import { FileUploadField } from "@/components/profile/file-upload-field";
 import { JobSeekerForm } from "@/components/profile/job-seeker-form";
+import { UploadCard } from "@/components/profile/upload-card";
 import { useJobSeekerProfile } from "@/hooks/use-profiles";
 import { useUploadResume } from "@/hooks/use-uploads";
 import { RESUME_UPLOAD } from "@/lib/uploads";
@@ -66,22 +66,14 @@ function JobSeekerProfileContent() {
       </Card>
 
       {exists ? (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="text-base">Résumé</CardTitle>
-            <CardDescription>
-              Attach a résumé so employers can review your background.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FileUploadField
-              config={RESUME_UPLOAD}
-              preview="link"
-              currentUrl={profile?.resumeUrl}
-              mutation={uploadResume}
-            />
-          </CardContent>
-        </Card>
+        <UploadCard
+          title="Résumé"
+          description="Attach a résumé so employers can review your background."
+          config={RESUME_UPLOAD}
+          preview="link"
+          currentUrl={profile?.resumeUrl}
+          mutation={uploadResume}
+        />
       ) : null}
     </div>
   );

@@ -49,7 +49,7 @@ function megabytes(bytes: number): number {
  * user-facing message on failure.
  */
 export function validateFile(file: File, config: UploadConfig): FileValidation {
-  const name = file.name.toLowerCase();
+  const name = file.name.trim().toLowerCase();
   const mimeOk = file.type !== "" && config.mimeTypes.includes(file.type);
   const extensionOk = config.extensions.some((ext) => name.endsWith(ext));
   if (!mimeOk && !extensionOk) {

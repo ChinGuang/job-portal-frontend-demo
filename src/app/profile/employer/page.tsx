@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { EmployerForm } from "@/components/profile/employer-form";
-import { FileUploadField } from "@/components/profile/file-upload-field";
+import { UploadCard } from "@/components/profile/upload-card";
 import { useEmployerProfile } from "@/hooks/use-profiles";
 import { useUploadLogo } from "@/hooks/use-uploads";
 import { LOGO_UPLOAD } from "@/lib/uploads";
@@ -66,23 +66,15 @@ function EmployerProfileContent() {
       </Card>
 
       {exists ? (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="text-base">Company logo</CardTitle>
-            <CardDescription>
-              Upload a logo to display on your listings.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FileUploadField
-              config={LOGO_UPLOAD}
-              preview="image"
-              currentUrl={profile?.logoUrl}
-              mutation={uploadLogo}
-              note="backend endpoint pending"
-            />
-          </CardContent>
-        </Card>
+        <UploadCard
+          title="Company logo"
+          description="Upload a logo to display on your listings."
+          config={LOGO_UPLOAD}
+          preview="image"
+          currentUrl={profile?.logoUrl}
+          mutation={uploadLogo}
+          note="backend endpoint pending"
+        />
       ) : null}
     </div>
   );
