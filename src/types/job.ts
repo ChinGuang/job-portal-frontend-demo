@@ -38,7 +38,7 @@ export interface Job {
   status: JobStatus;
   salaryMin?: number | null;
   salaryMax?: number | null;
-  salaryCurrency?: string | null;
+  currency?: string | null;
   employer?: EmployerProfileSummary | null;
   createdAt: string;
   updatedAt?: string;

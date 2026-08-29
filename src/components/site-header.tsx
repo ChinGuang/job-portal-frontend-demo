@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { Briefcase, LogOut } from "lucide-react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { useActiveRole } from "@/components/profile/active-role-provider";
 import { RoleSwitcher } from "@/components/profile/role-switcher";
 import { Button } from "@/components/ui/button";
 
 /** Primary top navigation shared across every page; auth-aware. */
 export function SiteHeader() {
   const { session, user, loading, signOut } = useAuth();
+  const { capabilities } = useActiveRole();
 
   return (
     <header className="border-b">
@@ -34,6 +36,14 @@ export function SiteHeader() {
               >
                 Dashboard
               </Link>
+              {capabilities.hasEmployer ? (
+                <Link
+                  href="/employer/jobs"
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  My listings
+                </Link>
+              ) : null}
               <span className="hidden text-muted-foreground sm:inline">
                 {user?.email}
               </span>

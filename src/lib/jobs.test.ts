@@ -81,11 +81,11 @@ describe("toExternalUrl", () => {
 
 describe("formatSalary", () => {
   it("returns null when there are no bounds", () => {
-    expect(formatSalary({ salaryMin: null, salaryMax: null, salaryCurrency: null })).toBeNull();
+    expect(formatSalary({ salaryMin: null, salaryMax: null, currency: null })).toBeNull();
   });
 
   it("defaults to Malaysian Ringgit (RM) when no currency is given", () => {
-    const result = formatSalary({ salaryMin: 50000, salaryMax: 70000, salaryCurrency: null });
+    const result = formatSalary({ salaryMin: 50000, salaryMax: 70000, currency: null });
     expect(result).toContain("RM");
     expect(result).toContain("50,000");
     expect(result).toContain("70,000");
@@ -93,27 +93,27 @@ describe("formatSalary", () => {
   });
 
   it("formats a full range with the given currency", () => {
-    const result = formatSalary({ salaryMin: 50000, salaryMax: 70000, salaryCurrency: "MYR" });
+    const result = formatSalary({ salaryMin: 50000, salaryMax: 70000, currency: "MYR" });
     expect(result).toContain("RM");
     expect(result).toContain("50,000");
     expect(result).toContain("70,000");
   });
 
   it("formats an open-ended minimum", () => {
-    const result = formatSalary({ salaryMin: 80000, salaryMax: null, salaryCurrency: "MYR" });
+    const result = formatSalary({ salaryMin: 80000, salaryMax: null, currency: "MYR" });
     expect(result?.startsWith("From ")).toBe(true);
     expect(result).toContain("80,000");
   });
 
   it("formats an open-ended maximum", () => {
-    const result = formatSalary({ salaryMin: null, salaryMax: 40000, salaryCurrency: "MYR" });
+    const result = formatSalary({ salaryMin: null, salaryMax: 40000, currency: "MYR" });
     expect(result?.startsWith("Up to ")).toBe(true);
     expect(result).toContain("40,000");
   });
 
   it("falls back gracefully for a non-ISO currency code", () => {
     expect(
-      formatSalary({ salaryMin: 100, salaryMax: null, salaryCurrency: "NOTACODE" }),
+      formatSalary({ salaryMin: 100, salaryMax: null, currency: "NOTACODE" }),
     ).toBe("From 100 NOTACODE");
   });
 });
