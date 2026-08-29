@@ -1,8 +1,14 @@
-import Link from "next/link";
-import { Briefcase } from "lucide-react";
+"use client";
 
-/** Primary top navigation shared across every page. */
+import Link from "next/link";
+import { Briefcase, LogOut } from "lucide-react";
+import { useAuth } from "@/components/auth/auth-provider";
+import { Button } from "@/components/ui/button";
+
+/** Primary top navigation shared across every page; auth-aware. */
 export function SiteHeader() {
+  const { session, user, loading, signOut } = useAuth();
+
   return (
     <header className="border-b">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
@@ -10,16 +16,40 @@ export function SiteHeader() {
           <Briefcase className="size-5" aria-hidden />
           <span>Job Portal</span>
         </Link>
-        <nav className="flex items-center gap-5 text-sm text-muted-foreground">
-          <Link href="/" className="transition-colors hover:text-foreground">
+        <nav className="flex items-center gap-4 text-sm">
+          <Link
+            href="/"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
             Browse jobs
           </Link>
-          <Link
-            href="/dashboard"
-            className="transition-colors hover:text-foreground"
-          >
-            Dashboard
-          </Link>
+
+          {loading ? null : session ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Dashboard
+              </Link>
+              <span className="hidden text-muted-foreground sm:inline">
+                {user?.email}
+              </span>
+              <Button size="sm" variant="outline" onClick={() => void signOut()}>
+                <LogOut className="size-4" aria-hidden />
+                Sign out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button size="sm" variant="ghost" render={<Link href="/login" />}>
+                Sign in
+              </Button>
+              <Button size="sm" render={<Link href="/signup" />}>
+                Sign up
+              </Button>
+            </>
+          )}
         </nav>
       </div>
     </header>
