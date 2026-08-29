@@ -23,7 +23,7 @@ export function useUploadResume() {
   });
 }
 
-/** Upload a company logo (assumed endpoint — see uploadEmployerLogo). */
+/** Upload a company logo to the employer profile. */
 export function useUploadLogo() {
   const queryClient = useQueryClient();
   const { session } = useAuth();

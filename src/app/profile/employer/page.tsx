@@ -73,7 +73,6 @@ function EmployerProfileContent() {
           preview="image"
           currentUrl={profile?.logoUrl}
           mutation={uploadLogo}
-          note="backend endpoint pending"
         />
       ) : null}
     </div>

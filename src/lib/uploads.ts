@@ -85,12 +85,7 @@ export function uploadJobSeekerResume(file: File): Promise<JobSeekerProfile> {
   );
 }
 
-/**
- * Upload a company logo. NOTE: the backend does not yet expose this endpoint —
- * the employer profile stores `logoUrl` and there is no multipart logo route in
- * the API spec. This calls the expected path so the UI is ready; it will 404
- * until the backend adds `POST /profiles/employer/logo`.
- */
+/** Upload a company logo to the current user's employer profile. */
 export function uploadEmployerLogo(file: File): Promise<EmployerProfile> {
   return api.post<EmployerProfile>("/profiles/employer/logo", fileForm(file));
 }
