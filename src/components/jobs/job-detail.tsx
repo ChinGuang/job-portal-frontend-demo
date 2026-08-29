@@ -141,9 +141,9 @@ export function JobDetail({ id }: { id: string }) {
               {employer.description ? (
                 <p className="text-muted-foreground">{employer.description}</p>
               ) : null}
-              {employer.website ? (
+              {employer.websiteUrl ? (
                 <a
-                  href={toExternalUrl(employer.website)}
+                  href={toExternalUrl(employer.websiteUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-foreground underline underline-offset-4"

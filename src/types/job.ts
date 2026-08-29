@@ -20,7 +20,7 @@ export type JobType =
 export interface EmployerProfileSummary {
   id: string;
   companyName: string;
-  website?: string | null;
+  websiteUrl?: string | null;
   logoUrl?: string | null;
   industry?: string | null;
   companySize?: string | null;
