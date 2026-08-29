@@ -27,14 +27,28 @@ export type EmployerSize = (typeof EMPLOYER_SIZES)[number];
 
 export interface EmployerProfile {
   companyName: string;
-  website: string;
+  websiteUrl: string;
+  logoUrl: string;
   industry: string;
-  size: string;
+  companySize: string;
   description: string;
   address: string;
 }
 
-export type EmployerProfileInput = EmployerProfile;
+/**
+ * Create/update payload. Optional fields are omitted when blank rather than sent
+ * as `""` — the backend validates `websiteUrl`/`logoUrl` as URLs, so an empty
+ * string would be rejected.
+ */
+export interface EmployerProfileInput {
+  companyName: string;
+  websiteUrl?: string;
+  logoUrl?: string;
+  industry?: string;
+  companySize?: string;
+  description?: string;
+  address?: string;
+}
 
 // --- Skills helpers (pure, unit-tested) -------------------------------------
 

@@ -5,6 +5,7 @@ import { useSaveEmployerProfile } from "@/hooks/use-profiles";
 import {
   EMPLOYER_SIZES,
   type EmployerProfile,
+  type EmployerProfileInput,
 } from "@/lib/profiles";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -23,9 +24,11 @@ export function EmployerForm({
   const save = useSaveEmployerProfile(exists);
 
   const [companyName, setCompanyName] = useState(profile?.companyName ?? "");
-  const [website, setWebsite] = useState(profile?.website ?? "");
+  const [websiteUrl, setWebsiteUrl] = useState(profile?.websiteUrl ?? "");
   const [industry, setIndustry] = useState(profile?.industry ?? "");
-  const [size, setSize] = useState(profile?.size ?? EMPLOYER_SIZES[0]);
+  const [companySize, setCompanySize] = useState(
+    profile?.companySize || EMPLOYER_SIZES[0],
+  );
   const [description, setDescription] = useState(profile?.description ?? "");
   const [address, setAddress] = useState(profile?.address ?? "");
   const [fieldError, setFieldError] = useState<string | null>(null);
@@ -39,17 +42,17 @@ export function EmployerForm({
       return;
     }
 
-    save.mutate(
-      {
-        companyName: companyName.trim(),
-        website: website.trim(),
-        industry: industry.trim(),
-        size,
-        description: description.trim(),
-        address: address.trim(),
-      },
-      { onSuccess: () => onSaved?.() },
-    );
+    // Send only the fields that have a value — the backend validates
+    // websiteUrl as a URL and rejects an empty string.
+    const payload: EmployerProfileInput = { companyName: companyName.trim() };
+    const withUrl = websiteUrl.trim();
+    if (withUrl) payload.websiteUrl = withUrl;
+    if (industry.trim()) payload.industry = industry.trim();
+    if (companySize) payload.companySize = companySize;
+    if (description.trim()) payload.description = description.trim();
+    if (address.trim()) payload.address = address.trim();
+
+    save.mutate(payload, { onSuccess: () => onSaved?.() });
   };
 
   return (
@@ -63,12 +66,12 @@ export function EmployerForm({
         />
       </FormField>
 
-      <FormField id="website" label="Website" hint="e.g. https://acme.com">
+      <FormField id="websiteUrl" label="Website" hint="e.g. https://acme.com">
         <Input
-          id="website"
+          id="websiteUrl"
           type="url"
-          value={website}
-          onChange={(e) => setWebsite(e.target.value)}
+          value={websiteUrl}
+          onChange={(e) => setWebsiteUrl(e.target.value)}
         />
       </FormField>
 
@@ -80,11 +83,11 @@ export function EmployerForm({
         />
       </FormField>
 
-      <FormField id="size" label="Company size">
+      <FormField id="companySize" label="Company size">
         <Select
-          id="size"
-          value={size}
-          onChange={(e) => setSize(e.target.value)}
+          id="companySize"
+          value={companySize}
+          onChange={(e) => setCompanySize(e.target.value)}
         >
           {EMPLOYER_SIZES.map((option) => (
             <option key={option} value={option}>
