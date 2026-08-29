@@ -56,11 +56,15 @@ export function useEmployerProfile(): UseQueryResult<EmployerProfile | null> {
  */
 export function useSaveJobSeekerProfile(exists: boolean) {
   const queryClient = useQueryClient();
+  const { session } = useAuth();
   return useMutation({
     mutationFn: (input: JobSeekerProfileInput) =>
       exists ? updateJobSeekerProfile(input) : createJobSeekerProfile(input),
     onSuccess: (data) => {
-      queryClient.setQueryData(["profile", "job-seeker"], data);
+      queryClient.setQueryData(
+        ["profile", "job-seeker", session?.user.id],
+        data,
+      );
       void queryClient.invalidateQueries({ queryKey: ["profile", "job-seeker"] });
       void queryClient.invalidateQueries({ queryKey: ["me"] });
     },
@@ -69,11 +73,12 @@ export function useSaveJobSeekerProfile(exists: boolean) {
 
 export function useSaveEmployerProfile(exists: boolean) {
   const queryClient = useQueryClient();
+  const { session } = useAuth();
   return useMutation({
     mutationFn: (input: EmployerProfileInput) =>
       exists ? updateEmployerProfile(input) : createEmployerProfile(input),
     onSuccess: (data) => {
-      queryClient.setQueryData(["profile", "employer"], data);
+      queryClient.setQueryData(["profile", "employer", session?.user.id], data);
       void queryClient.invalidateQueries({ queryKey: ["profile", "employer"] });
       void queryClient.invalidateQueries({ queryKey: ["me"] });
     },

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { JobSeekerForm } from "@/components/profile/job-seeker-form";
@@ -15,6 +16,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 function JobSeekerProfileContent() {
+  const router = useRouter();
   const { data: profile, isLoading, isError, error } = useJobSeekerProfile();
   const exists = Boolean(profile);
 
@@ -51,7 +53,10 @@ function JobSeekerProfileContent() {
                 : "Couldn't load your profile."}
             </p>
           ) : (
-            <JobSeekerForm profile={profile ?? null} />
+            <JobSeekerForm
+              profile={profile ?? null}
+              onSaved={() => router.push("/dashboard")}
+            />
           )}
         </CardContent>
       </Card>

@@ -4,8 +4,11 @@ import Link from "next/link";
 import { Briefcase, CheckCircle2, Circle, UserRound } from "lucide-react";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { useAuth } from "@/components/auth/auth-provider";
+import { useActiveRole } from "@/components/profile/active-role-provider";
 import { useMe } from "@/hooks/use-me";
 import { deriveCapabilities } from "@/lib/me";
+import { ROLE_LABELS, type Role } from "@/lib/roles";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +27,7 @@ function ProfileStatusCard({
   exists,
   loading,
   href,
+  active,
 }: {
   icon: typeof UserRound;
   title: string;
@@ -31,9 +35,10 @@ function ProfileStatusCard({
   exists: boolean;
   loading: boolean;
   href: string;
+  active?: boolean;
 }) {
   return (
-    <Card>
+    <Card className={cn(active && "ring-2 ring-ring")}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <Icon className="size-6 text-muted-foreground" aria-hidden />
@@ -73,7 +78,41 @@ function ProfileStatusCard({
 function DashboardContent() {
   const { user } = useAuth();
   const { data: me, isLoading, isError, error } = useMe();
+  const { activeRole, canSwitch } = useActiveRole();
   const capabilities = deriveCapabilities(me);
+
+  const cards: Record<Role, React.ReactNode> = {
+    "job-seeker": (
+      <ProfileStatusCard
+        key="job-seeker"
+        icon={UserRound}
+        title="Job seeker"
+        description="Build a profile, upload a résumé, and apply to jobs."
+        exists={capabilities.hasJobSeeker}
+        loading={isLoading}
+        href="/profile/job-seeker"
+        active={canSwitch && activeRole === "job-seeker"}
+      />
+    ),
+    employer: (
+      <ProfileStatusCard
+        key="employer"
+        icon={Briefcase}
+        title="Employer"
+        description="Create a company profile and post job listings."
+        exists={capabilities.hasEmployer}
+        loading={isLoading}
+        href="/profile/employer"
+        active={canSwitch && activeRole === "employer"}
+      />
+    ),
+  };
+
+  // When both profiles exist, lead with the role the user is acting as.
+  const order: Role[] =
+    canSwitch && activeRole === "employer"
+      ? ["employer", "job-seeker"]
+      : ["job-seeker", "employer"];
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10">
@@ -120,24 +159,19 @@ function DashboardContent() {
         </div>
       ) : null}
 
-      <h2 className="mb-4 text-lg font-semibold">Your profiles</h2>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Your profiles</h2>
+        {canSwitch && activeRole ? (
+          <p className="text-sm text-muted-foreground">
+            Acting as{" "}
+            <span className="font-medium text-foreground">
+              {ROLE_LABELS[activeRole]}
+            </span>
+          </p>
+        ) : null}
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <ProfileStatusCard
-          icon={UserRound}
-          title="Job seeker"
-          description="Build a profile, upload a résumé, and apply to jobs."
-          exists={capabilities.hasJobSeeker}
-          loading={isLoading}
-          href="/profile/job-seeker"
-        />
-        <ProfileStatusCard
-          icon={Briefcase}
-          title="Employer"
-          description="Create a company profile and post job listings."
-          exists={capabilities.hasEmployer}
-          loading={isLoading}
-          href="/profile/employer"
-        />
+        {order.map((role) => cards[role])}
       </div>
     </div>
   );

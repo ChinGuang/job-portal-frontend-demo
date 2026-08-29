@@ -7,10 +7,10 @@ import {
   parseSkills,
   type JobSeekerProfile,
 } from "@/lib/profiles";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "./form-field";
+import { ProfileFormFooter } from "./profile-form-footer";
 
 export function JobSeekerForm({
   profile,
@@ -113,27 +113,14 @@ export function JobSeekerForm({
         />
       </FormField>
 
-      {fieldError ? (
-        <p className="text-sm text-destructive">{fieldError}</p>
-      ) : null}
-      {save.isError ? (
-        <p className="text-sm text-destructive">
-          {save.error instanceof Error ? save.error.message : "Couldn't save."}
-        </p>
-      ) : null}
-      {save.isSuccess ? (
-        <p className="text-sm text-emerald-600 dark:text-emerald-400">
-          Profile saved.
-        </p>
-      ) : null}
-
-      <Button type="submit" disabled={save.isPending}>
-        {save.isPending
-          ? "Saving…"
-          : exists
-            ? "Save changes"
-            : "Create profile"}
-      </Button>
+      <ProfileFormFooter
+        fieldError={fieldError}
+        saveError={save.error}
+        isError={save.isError}
+        isSuccess={save.isSuccess}
+        isPending={save.isPending}
+        exists={exists}
+      />
     </form>
   );
 }
