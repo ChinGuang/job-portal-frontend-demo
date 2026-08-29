@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCreateJob, useUpdateJob } from "@/hooks/use-employer-jobs";
 import {
   EMPLOYER_JOB_TYPES,
+  toEmployerJobType,
   type CreateJobInput,
   type EmployerJobType,
 } from "@/lib/employer-jobs";
@@ -38,7 +39,7 @@ export function JobForm({
   );
   const [location, setLocation] = useState(job?.location ?? "");
   const [jobType, setJobType] = useState<EmployerJobType>(
-    (job?.jobType as EmployerJobType) ?? EMPLOYER_JOB_TYPES[0].value,
+    toEmployerJobType(job?.jobType),
   );
   const [salaryMin, setSalaryMin] = useState(
     job?.salaryMin != null ? String(job.salaryMin) : "",
@@ -79,10 +80,18 @@ export function JobForm({
       location: location.trim(),
       jobType,
     };
+    // On create, omit empty salary fields. On edit, send `null` so a cleared
+    // field actually removes the previously-set value (PATCH ignores undefined).
     if (min !== undefined) payload.salaryMin = min;
+    else if (exists) payload.salaryMin = null;
     if (max !== undefined) payload.salaryMax = max;
-    if ((min !== undefined || max !== undefined) && currency.trim()) {
-      payload.currency = currency.trim();
+    else if (exists) payload.salaryMax = null;
+
+    const trimmedCurrency = currency.trim();
+    if (min !== undefined || max !== undefined) {
+      payload.currency = trimmedCurrency || null;
+    } else if (exists) {
+      payload.currency = null;
     }
 
     save.mutate(payload, { onSuccess: (data) => onSaved?.(data) });

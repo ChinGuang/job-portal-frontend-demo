@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { RequireAuth } from "@/components/auth/require-auth";
-import { RequireEmployer } from "@/components/employer/require-employer";
+import { EmployerPageShell } from "@/components/employer/employer-page-shell";
 import { JobStatusControls } from "@/components/employer/job-status-controls";
 import { useMyJobs } from "@/hooks/use-employer-jobs";
 import { STATUS_LABELS } from "@/lib/job-status";
@@ -61,7 +60,7 @@ function EmployerJobsContent() {
   const jobs = data?.items ?? [];
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10">
+    <>
       <header className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your listings</h1>
@@ -100,16 +99,14 @@ function EmployerJobsContent() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
 export default function EmployerJobsPage() {
   return (
-    <RequireAuth>
-      <RequireEmployer>
-        <EmployerJobsContent />
-      </RequireEmployer>
-    </RequireAuth>
+    <EmployerPageShell>
+      <EmployerJobsContent />
+    </EmployerPageShell>
   );
 }
