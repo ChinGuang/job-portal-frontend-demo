@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MailCheck } from "lucide-react";
 import { useAuth } from "./auth-provider";
+import { GoogleButton } from "./google-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -85,7 +86,16 @@ export function SignupForm() {
             variables to enable sign up.
           </p>
         ) : (
-          <form className="space-y-4" onSubmit={onSubmit}>
+          <div className="space-y-4">
+            <GoogleButton />
+
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground">or</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            <form className="space-y-4" onSubmit={onSubmit}>
             <div className="space-y-1.5">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -138,7 +148,8 @@ export function SignupForm() {
                 Sign in
               </Link>
             </p>
-          </form>
+            </form>
+          </div>
         )}
       </CardContent>
     </Card>

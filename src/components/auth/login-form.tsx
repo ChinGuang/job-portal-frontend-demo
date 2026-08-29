@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "./auth-provider";
+import { GoogleButton } from "./google-button";
 import { sanitizeRedirect } from "@/lib/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,7 +58,16 @@ export function LoginForm() {
             variables to enable sign in.
           </p>
         ) : (
-          <form className="space-y-4" onSubmit={onSubmit}>
+          <div className="space-y-4">
+            <GoogleButton redirectPath={redirect} />
+
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground">or</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            <form className="space-y-4" onSubmit={onSubmit}>
             <div className="space-y-1.5">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -97,7 +107,8 @@ export function LoginForm() {
                 Sign up
               </Link>
             </p>
-          </form>
+            </form>
+          </div>
         )}
       </CardContent>
     </Card>

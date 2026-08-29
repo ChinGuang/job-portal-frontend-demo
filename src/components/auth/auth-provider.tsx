@@ -27,6 +27,12 @@ interface AuthContextValue {
   isConfigured: boolean;
   signIn(email: string, password: string): Promise<{ error: string | null }>;
   signUp(email: string, password: string): Promise<SignUpResult>;
+  /**
+   * Start the Google OAuth flow. On success the browser is redirected away, so
+   * this only returns when there is an error before the redirect. `redirectPath`
+   * is the internal path to land on after authentication.
+   */
+  signInWithGoogle(redirectPath?: string): Promise<{ error: string | null }>;
   signOut(): Promise<void>;
 }
 
@@ -95,6 +101,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [supabase],
   );
 
+  const signInWithGoogle = useCallback(
+    async (redirectPath = "/dashboard") => {
+      if (!supabase) return { error: "Authentication is not configured." };
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}${redirectPath}`,
+        },
+      });
+      return { error: error?.message ?? null };
+    },
+    [supabase],
+  );
+
   const signOut = useCallback(async () => {
     if (supabase) await supabase.auth.signOut();
     setSession(null);
@@ -108,9 +128,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isConfigured: supabase !== null,
       signIn,
       signUp,
+      signInWithGoogle,
       signOut,
     }),
-    [session, loading, supabase, signIn, signUp, signOut],
+    [session, loading, supabase, signIn, signUp, signInWithGoogle, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
