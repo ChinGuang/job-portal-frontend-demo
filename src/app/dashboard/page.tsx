@@ -5,8 +5,7 @@ import { Briefcase, CheckCircle2, Circle, UserRound } from "lucide-react";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { useAuth } from "@/components/auth/auth-provider";
 import { useActiveRole } from "@/components/profile/active-role-provider";
-import { useMe } from "@/hooks/use-me";
-import { deriveCapabilities } from "@/lib/me";
+import { useCapabilities } from "@/hooks/use-profiles";
 import { ROLE_LABELS, type Role } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -77,9 +76,11 @@ function ProfileStatusCard({
 
 function DashboardContent() {
   const { user } = useAuth();
-  const { data: me, isLoading, isError, error } = useMe();
   const { activeRole, canSwitch } = useActiveRole();
-  const capabilities = deriveCapabilities(me);
+  const capabilities = useCapabilities();
+  const { isLoading, isError } = capabilities;
+  const provider =
+    (user?.app_metadata?.provider as string | undefined) ?? "email";
 
   const cards: Record<Role, React.ReactNode> = {
     "job-seeker": (
@@ -128,23 +129,14 @@ function DashboardContent() {
           <CardTitle className="text-base">Account</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1 text-sm">
-          {isLoading ? (
-            <>
-              <Skeleton className="h-4 w-56" />
-              <Skeleton className="h-4 w-40" />
-            </>
-          ) : (
-            <>
-              <p>
-                <span className="text-muted-foreground">Email: </span>
-                {me?.email ?? user?.email ?? "—"}
-              </p>
-              <p>
-                <span className="text-muted-foreground">Provider: </span>
-                {me?.provider ?? "SUPABASE"}
-              </p>
-            </>
-          )}
+          <p>
+            <span className="text-muted-foreground">Email: </span>
+            {user?.email ?? "—"}
+          </p>
+          <p>
+            <span className="text-muted-foreground">Provider: </span>
+            {provider}
+          </p>
         </CardContent>
       </Card>
 
@@ -154,7 +146,7 @@ function DashboardContent() {
             Couldn&apos;t load your profile status
           </p>
           <p className="mt-1 text-muted-foreground">
-            {error instanceof Error ? error.message : "Something went wrong."}
+            Something went wrong loading your profiles. Please refresh.
           </p>
         </div>
       ) : null}

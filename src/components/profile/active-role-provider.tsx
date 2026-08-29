@@ -7,9 +7,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useMe } from "@/hooks/use-me";
-import { deriveCapabilities, type ProfileCapabilities } from "@/lib/me";
-import { resolveActiveRole, type Role } from "@/lib/roles";
+import { useCapabilities } from "@/hooks/use-profiles";
+import {
+  resolveActiveRole,
+  type ProfileCapabilities,
+  type Role,
+} from "@/lib/roles";
 
 const STORAGE_KEY = "job-portal.active-role";
 
@@ -35,8 +38,7 @@ function readStoredRole(): string | null {
 }
 
 export function ActiveRoleProvider({ children }: { children: React.ReactNode }) {
-  const { data: me } = useMe();
-  const capabilities = deriveCapabilities(me);
+  const { hasJobSeeker, hasEmployer } = useCapabilities();
   const [stored, setStored] = useState<string | null>(readStoredRole);
 
   const setActiveRole = useCallback((role: Role) => {
@@ -49,13 +51,14 @@ export function ActiveRoleProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const value = useMemo<ActiveRoleContextValue>(() => {
+    const capabilities: ProfileCapabilities = { hasJobSeeker, hasEmployer };
     return {
       activeRole: resolveActiveRole(capabilities, stored),
       setActiveRole,
-      canSwitch: capabilities.hasJobSeeker && capabilities.hasEmployer,
+      canSwitch: hasJobSeeker && hasEmployer,
       capabilities,
     };
-  }, [capabilities, stored, setActiveRole]);
+  }, [hasJobSeeker, hasEmployer, stored, setActiveRole]);
 
   return (
     <ActiveRoleContext.Provider value={value}>

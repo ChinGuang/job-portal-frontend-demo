@@ -1,4 +1,8 @@
-import type { ProfileCapabilities } from "./me";
+/** Which profiles an account currently holds (its unlocked capabilities). */
+export interface ProfileCapabilities {
+  hasJobSeeker: boolean;
+  hasEmployer: boolean;
+}
 
 /** The two capabilities an account can hold. */
 export type Role = "job-seeker" | "employer";

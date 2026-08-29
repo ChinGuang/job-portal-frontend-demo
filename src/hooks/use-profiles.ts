@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { useAuth } from "@/components/auth/auth-provider";
 import { ApiError } from "@/lib/api-error";
+import type { ProfileCapabilities } from "@/lib/roles";
 import {
   createEmployerProfile,
   createJobSeekerProfile,
@@ -47,6 +48,25 @@ export function useEmployerProfile(): UseQueryResult<EmployerProfile | null> {
     queryFn: () => orNull(getEmployerProfile()),
     enabled: Boolean(session),
   });
+}
+
+/**
+ * Which profiles the account holds, derived from the profile endpoints
+ * themselves (a 200 means it exists, a 404 means it doesn't) — `GET /me` does
+ * not report profile existence.
+ */
+export function useCapabilities(): ProfileCapabilities & {
+  isLoading: boolean;
+  isError: boolean;
+} {
+  const jobSeeker = useJobSeekerProfile();
+  const employer = useEmployerProfile();
+  return {
+    hasJobSeeker: jobSeeker.data != null,
+    hasEmployer: employer.data != null,
+    isLoading: jobSeeker.isLoading || employer.isLoading,
+    isError: jobSeeker.isError || employer.isError,
+  };
 }
 
 /**
