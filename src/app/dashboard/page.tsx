@@ -128,7 +128,7 @@ function DashboardContent() {
           description="Build a profile, upload a résumé, and apply to jobs."
           exists={capabilities.hasJobSeeker}
           loading={isLoading}
-          href="/onboarding"
+          href="/profile/job-seeker"
         />
         <ProfileStatusCard
           icon={Briefcase}
@@ -136,7 +136,7 @@ function DashboardContent() {
           description="Create a company profile and post job listings."
           exists={capabilities.hasEmployer}
           loading={isLoading}
-          href="/onboarding"
+          href="/profile/employer"
         />
       </div>
     </div>
