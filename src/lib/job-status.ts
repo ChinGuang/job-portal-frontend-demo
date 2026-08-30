@@ -8,18 +8,16 @@ export interface StatusAction {
 
 /**
  * Status transitions reachable via `PATCH /jobs/:id/status`, mirroring the
- * backend state machine: DRAFT ⇄ PUBLISHED ⇄ CLOSED. ARCHIVED is terminal and
- * reached only via archive (soft-delete), not a status change. The backend is
- * the final authority (it returns 409 on an invalid transition); this drives
- * which buttons to show.
+ * backend state machine: DRAFT → PUBLISHED → CLOSED, forward only. Unpublish
+ * (PUBLISHED → DRAFT) and reopen (CLOSED → PUBLISHED) are not allowed. ARCHIVED
+ * is terminal and reached only via archive (soft-delete), not a status change.
+ * The backend is the final authority (it returns 409 on an invalid transition);
+ * this drives which buttons to show.
  */
 const TRANSITIONS: Record<JobStatus, StatusAction[]> = {
   DRAFT: [{ to: "PUBLISHED", label: "Publish" }],
-  PUBLISHED: [
-    { to: "CLOSED", label: "Close" },
-    { to: "DRAFT", label: "Unpublish" },
-  ],
-  CLOSED: [{ to: "PUBLISHED", label: "Reopen" }],
+  PUBLISHED: [{ to: "CLOSED", label: "Close" }],
+  CLOSED: [],
   ARCHIVED: [],
 };
 

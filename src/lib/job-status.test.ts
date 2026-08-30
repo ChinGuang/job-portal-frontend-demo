@@ -11,15 +11,12 @@ describe("statusActions", () => {
     expect(statusActions("DRAFT")).toEqual([{ to: "PUBLISHED", label: "Publish" }]);
   });
 
-  it("offers Close and Unpublish from PUBLISHED", () => {
-    expect(statusActions("PUBLISHED")).toEqual([
-      { to: "CLOSED", label: "Close" },
-      { to: "DRAFT", label: "Unpublish" },
-    ]);
+  it("offers only Close from PUBLISHED (no unpublish)", () => {
+    expect(statusActions("PUBLISHED")).toEqual([{ to: "CLOSED", label: "Close" }]);
   });
 
-  it("offers Reopen from CLOSED", () => {
-    expect(statusActions("CLOSED")).toEqual([{ to: "PUBLISHED", label: "Reopen" }]);
+  it("offers nothing from CLOSED (no reopen)", () => {
+    expect(statusActions("CLOSED")).toEqual([]);
   });
 
   it("offers nothing from ARCHIVED", () => {
@@ -28,16 +25,15 @@ describe("statusActions", () => {
 });
 
 describe("canTransitionStatus", () => {
-  it("allows valid transitions", () => {
+  it("allows the forward transitions", () => {
     expect(canTransitionStatus("DRAFT", "PUBLISHED")).toBe(true);
     expect(canTransitionStatus("PUBLISHED", "CLOSED")).toBe(true);
-    expect(canTransitionStatus("PUBLISHED", "DRAFT")).toBe(true);
-    expect(canTransitionStatus("CLOSED", "PUBLISHED")).toBe(true);
   });
 
-  it("rejects invalid transitions", () => {
+  it("rejects reverse and invalid transitions", () => {
+    expect(canTransitionStatus("PUBLISHED", "DRAFT")).toBe(false); // no unpublish
+    expect(canTransitionStatus("CLOSED", "PUBLISHED")).toBe(false); // no reopen
     expect(canTransitionStatus("DRAFT", "CLOSED")).toBe(false);
-    expect(canTransitionStatus("CLOSED", "DRAFT")).toBe(false);
     expect(canTransitionStatus("ARCHIVED", "PUBLISHED")).toBe(false);
     expect(canTransitionStatus("PUBLISHED", "PUBLISHED")).toBe(false);
   });
