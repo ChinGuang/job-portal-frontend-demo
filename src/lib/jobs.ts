@@ -72,14 +72,14 @@ export function formatJobType(type: string): string {
   return lower.charAt(0).toUpperCase() + lower.slice(1);
 }
 
-type SalaryFields = Pick<Job, "salaryMin" | "salaryMax" | "salaryCurrency">;
+type SalaryFields = Pick<Job, "salaryMin" | "salaryMax" | "currency">;
 
 /** Format a salary range, or null when no bounds are present. */
 export function formatSalary(job: SalaryFields): string | null {
   const { salaryMin, salaryMax } = job;
   if (salaryMin == null && salaryMax == null) return null;
 
-  const currency = job.salaryCurrency || DEFAULT_CURRENCY;
+  const currency = job.currency || DEFAULT_CURRENCY;
   const format = (amount: number): string => {
     try {
       return new Intl.NumberFormat(LOCALE, {
