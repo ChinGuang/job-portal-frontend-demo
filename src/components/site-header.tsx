@@ -44,6 +44,14 @@ export function SiteHeader() {
                   My listings
                 </Link>
               ) : null}
+              {capabilities.hasJobSeeker ? (
+                <Link
+                  href="/seeker/applications"
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  My applications
+                </Link>
+              ) : null}
               <span className="hidden text-muted-foreground sm:inline">
                 {user?.email}
               </span>

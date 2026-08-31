@@ -5,6 +5,7 @@ import { Building2, Check, Globe, MapPin } from "lucide-react";
 import { useJob } from "@/hooks/use-jobs";
 import { ApiError } from "@/lib/api-error";
 import { formatJobType, formatSalary, toExternalUrl } from "@/lib/jobs";
+import { ApplyPanel } from "@/components/jobs/apply-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -108,22 +109,7 @@ export function JobDetail({ id }: { id: string }) {
       </div>
 
       <aside className="space-y-4">
-        <Card>
-          <CardContent className="space-y-3 pt-6">
-            {isClosed ? (
-              <Button className="w-full" disabled>
-                Applications closed
-              </Button>
-            ) : (
-              <Button className="w-full" render={<Link href="/login" />}>
-                Apply now
-              </Button>
-            )}
-            <p className="text-center text-xs text-muted-foreground">
-              You&apos;ll need a job-seeker profile to apply.
-            </p>
-          </CardContent>
-        </Card>
+        <ApplyPanel job={job} />
 
         {employer ? (
           <Card>
