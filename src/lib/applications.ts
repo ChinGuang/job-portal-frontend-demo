@@ -1,5 +1,6 @@
 import { api } from "./api-client";
 import { ApiError } from "./api-error";
+import { LOCALE } from "./jobs";
 import type { Job, Paginated } from "@/types/job";
 
 export type ApplicationStatus =
@@ -63,6 +64,18 @@ export function describeApplyError(error: unknown): string {
   return error instanceof Error
     ? error.message
     : "Something went wrong submitting your application.";
+}
+
+/** Format an application's date for display (localized), or "" if invalid. */
+export function formatAppliedDate(iso: string): string {
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime())
+    ? ""
+    : date.toLocaleDateString(LOCALE, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
 }
 
 // --- API ---------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ApiError } from "./api-error";
-import { describeApplyError } from "./applications";
+import { describeApplyError, formatAppliedDate } from "./applications";
 
 describe("describeApplyError", () => {
   it("maps 409 to an already-applied message (ignoring the raw body)", () => {
@@ -37,5 +37,15 @@ describe("describeApplyError", () => {
 
   it("has a fallback for a non-Error value", () => {
     expect(describeApplyError("weird")).toMatch(/something went wrong/i);
+  });
+});
+
+describe("formatAppliedDate", () => {
+  it("returns a non-empty string for a valid ISO date", () => {
+    expect(formatAppliedDate("2026-08-30T04:18:40Z")).not.toBe("");
+  });
+
+  it("returns an empty string for an invalid date", () => {
+    expect(formatAppliedDate("not-a-date")).toBe("");
   });
 });

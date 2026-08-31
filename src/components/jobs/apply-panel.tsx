@@ -23,7 +23,11 @@ function Panel({ children }: { children: React.ReactNode }) {
 
 export function ApplyPanel({ job }: { job: Job }) {
   const { session, loading: authLoading } = useAuth();
-  const { data: profile, isLoading: profileLoading } = useJobSeekerProfile();
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isError: profileError,
+  } = useJobSeekerProfile();
   const apply = useApplyToJob(job.id);
   const [coverLetter, setCoverLetter] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -74,6 +78,21 @@ export function ApplyPanel({ job }: { job: Job }) {
         <Button className="w-full" disabled>
           Checking eligibility…
         </Button>
+      </Panel>
+    );
+  }
+
+  // A failed profile fetch is not the same as "no profile" — don't mislead an
+  // existing seeker into creating another profile.
+  if (profileError) {
+    return (
+      <Panel>
+        <Button className="w-full" disabled>
+          Couldn&apos;t check eligibility
+        </Button>
+        <p className="text-center text-xs text-muted-foreground">
+          Something went wrong loading your profile. Please refresh.
+        </p>
       </Panel>
     );
   }

@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Building2, MapPin } from "lucide-react";
-import { RequireAuth } from "@/components/auth/require-auth";
-import { RequireSeeker } from "@/components/seeker/require-seeker";
+import { Building2, MapPin } from "lucide-react";
+import { SeekerPageShell } from "@/components/seeker/seeker-page-shell";
 import { useApplication } from "@/hooks/use-applications";
-import { APPLICATION_STATUS_META } from "@/lib/applications";
-import { formatJobType, formatSalary, LOCALE } from "@/lib/jobs";
+import { useJob } from "@/hooks/use-jobs";
+import { APPLICATION_STATUS_META, formatAppliedDate } from "@/lib/applications";
+import { formatJobType, formatSalary } from "@/lib/jobs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,20 +18,12 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function appliedDate(iso: string): string {
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime())
-    ? ""
-    : date.toLocaleDateString(LOCALE, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-}
-
 function ApplicationDetailBody() {
   const params = useParams<{ id: string }>();
   const { data: application, isLoading, isError } = useApplication(params.id);
+  // The embedded job has no employer relation; the public job query fills the
+  // company name (cached and shared with browse).
+  const { data: publicJob } = useJob(application?.jobId ?? "");
 
   if (isLoading) return <Skeleton className="h-64 w-full" />;
   if (isError || !application)
@@ -44,6 +36,7 @@ function ApplicationDetailBody() {
   const { job } = application;
   const meta = APPLICATION_STATUS_META[application.status];
   const salary = formatSalary(job);
+  const companyName = publicJob?.employer?.companyName;
 
   return (
     <div className="space-y-6">
@@ -53,10 +46,10 @@ function ApplicationDetailBody() {
           <Badge variant={meta.variant}>{meta.label}</Badge>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-          {job.employer?.companyName ? (
+          {companyName ? (
             <span className="inline-flex items-center gap-1">
               <Building2 className="size-4" aria-hidden />
-              {job.employer.companyName}
+              {companyName}
             </span>
           ) : null}
           {job.location ? (
@@ -69,7 +62,7 @@ function ApplicationDetailBody() {
           {salary ? <span className="font-medium text-foreground">{salary}</span> : null}
         </div>
         <p className="text-sm text-muted-foreground">
-          Applied {appliedDate(application.createdAt)}
+          Applied {formatAppliedDate(application.createdAt)}
         </p>
       </div>
 
@@ -119,19 +112,12 @@ function ApplicationDetailBody() {
 
 export default function ApplicationDetailPage() {
   return (
-    <RequireAuth>
-      <RequireSeeker>
-        <div className="mx-auto w-full max-w-2xl px-4 py-10">
-          <Link
-            href="/seeker/applications"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="size-4" aria-hidden />
-            Back to applications
-          </Link>
-          <ApplicationDetailBody />
-        </div>
-      </RequireSeeker>
-    </RequireAuth>
+    <SeekerPageShell
+      maxWidth="max-w-2xl"
+      backHref="/seeker/applications"
+      backLabel="Back to applications"
+    >
+      <ApplicationDetailBody />
+    </SeekerPageShell>
   );
 }

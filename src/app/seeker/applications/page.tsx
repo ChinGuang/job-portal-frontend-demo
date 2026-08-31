@@ -1,33 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { RequireAuth } from "@/components/auth/require-auth";
-import { RequireSeeker } from "@/components/seeker/require-seeker";
+import { SeekerPageShell } from "@/components/seeker/seeker-page-shell";
 import { useMyApplications } from "@/hooks/use-applications";
 import { useJob } from "@/hooks/use-jobs";
-import { APPLICATION_STATUS_META, type Application } from "@/lib/applications";
-import { LOCALE } from "@/lib/jobs";
+import {
+  APPLICATION_STATUS_META,
+  formatAppliedDate,
+  type Application,
+} from "@/lib/applications";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function appliedDate(iso: string): string {
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime())
-    ? ""
-    : date.toLocaleDateString(LOCALE, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-}
-
 function ApplicationRow({ application }: { application: Application }) {
   // The list DTO has no job, so enrich from the (cached) public job query.
   const { data: job } = useJob(application.jobId);
   const meta = APPLICATION_STATUS_META[application.status];
-  const date = appliedDate(application.createdAt);
+  const date = formatAppliedDate(application.createdAt);
 
   return (
     <Card>
@@ -61,7 +52,7 @@ function ApplicationsContent() {
   const applications = data?.items ?? [];
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10">
+    <>
       <header className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Your applications</h1>
         <p className="text-muted-foreground">
@@ -94,16 +85,14 @@ function ApplicationsContent() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
 export default function SeekerApplicationsPage() {
   return (
-    <RequireAuth>
-      <RequireSeeker>
-        <ApplicationsContent />
-      </RequireSeeker>
-    </RequireAuth>
+    <SeekerPageShell>
+      <ApplicationsContent />
+    </SeekerPageShell>
   );
 }
