@@ -1,5 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Keep in sync with e2e/smoke.spec.ts (E2E_API_ORIGIN): the mocked backend
+// origin must match the base URL the app calls.
+const API_ORIGIN = process.env.E2E_API_ORIGIN ?? "http://localhost:3000";
+
 /**
  * Playwright drives the real app; all network (backend + Supabase auth) is
  * mocked per-test by path, so the smoke test is hermetic and needs neither a
@@ -26,7 +30,7 @@ export default defineConfig({
     env: {
       NEXT_PUBLIC_SUPABASE_URL: "https://test.supabase.co",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "test-anon-key",
-      NEXT_PUBLIC_API_BASE_URL: "http://localhost:3000",
+      NEXT_PUBLIC_API_BASE_URL: API_ORIGIN,
     },
   },
 });

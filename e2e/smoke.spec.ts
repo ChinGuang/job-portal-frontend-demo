@@ -26,6 +26,11 @@ const SEEKER_PROFILE = {
   resumeUrl: "https://files.example.com/resume.pdf",
 };
 
+// Backend origin the app calls. Must match the dev server's
+// NEXT_PUBLIC_API_BASE_URL (see playwright.config.ts); override for a server
+// whose API base differs from the default.
+const API_ORIGIN = process.env.E2E_API_ORIGIN ?? "http://localhost:3000";
+
 function json(body: unknown, status = 200) {
   return { status, contentType: "application/json", body: JSON.stringify(body) };
 }
@@ -60,7 +65,7 @@ async function mockAll(page: Page) {
   });
 
   // Backend REST API (job listings, profiles, applications).
-  await page.route("http://localhost:3000/**", async (route) => {
+  await page.route(`${API_ORIGIN}/**`, async (route) => {
     const req = route.request();
     const path = new URL(req.url()).pathname;
 

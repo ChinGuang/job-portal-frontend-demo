@@ -46,7 +46,9 @@ export function JobDetail({ id }: { id: string }) {
     ) : (
       <ErrorState
         title="Couldn't load this job"
-        message={error instanceof Error ? error.message : undefined}
+        message={
+          error instanceof Error ? error.message : "Something went wrong."
+        }
         action={backToJobs}
       />
     );
