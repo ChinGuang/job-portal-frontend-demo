@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useJobs } from "@/hooks/use-jobs";
 import { Button } from "@/components/ui/button";
+import { EmptyState, ErrorState } from "@/components/common/states";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { JobCard } from "./job-card";
@@ -79,14 +80,12 @@ export function JobsBrowser() {
       <JobFilters value={filters} onApply={applyFilters} onClear={clearFilters} />
 
       {query.isError ? (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-6 text-center">
-          <p className="font-medium text-destructive">Couldn&apos;t load jobs</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {query.error instanceof Error
-              ? query.error.message
-              : "Something went wrong."}
-          </p>
-        </div>
+        <ErrorState
+          title="Couldn't load jobs"
+          message={
+            query.error instanceof Error ? query.error.message : undefined
+          }
+        />
       ) : query.isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -94,23 +93,21 @@ export function JobsBrowser() {
           ))}
         </div>
       ) : jobs.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center">
-          <p className="font-medium">No jobs found</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {page > 1
+        <EmptyState
+          title="No jobs found"
+          description={
+            page > 1
               ? "This page is empty — there may be fewer results than expected."
-              : "Try adjusting your search or filters."}
-          </p>
-          {page > 1 ? (
-            <Button
-              variant="outline"
-              className="mt-4"
-              onClick={() => goToPage(1)}
-            >
-              Back to first page
-            </Button>
-          ) : null}
-        </div>
+              : "Try adjusting your search or filters."
+          }
+          action={
+            page > 1 ? (
+              <Button variant="outline" onClick={() => goToPage(1)}>
+                Back to first page
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
         <>
           <div

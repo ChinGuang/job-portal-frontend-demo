@@ -6,6 +6,7 @@ import { EmployerPageShell } from "@/components/employer/employer-page-shell";
 import { ApplicantCard } from "@/components/employer/applicant-card";
 import { useJobApplicants } from "@/hooks/use-applicant-review";
 import { useMyJobs } from "@/hooks/use-employer-jobs";
+import { EmptyState, ErrorState } from "@/components/common/states";
 import {
   APPLICATION_STATUS_META,
   type ApplicationStatus,
@@ -71,17 +72,23 @@ function ApplicantsBody() {
           <Skeleton className="h-40 w-full" />
         </div>
       ) : isError ? (
-        <p className="text-sm text-destructive">
-          {error instanceof Error ? error.message : "Couldn't load applicants."}
-        </p>
+        <ErrorState
+          title="Couldn't load applicants"
+          message={error instanceof Error ? error.message : undefined}
+        />
       ) : applicants.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
-          <p className="text-muted-foreground">
-            {filter === "ALL"
-              ? "No one has applied to this listing yet."
-              : "No applicants with this status."}
-          </p>
-        </div>
+        <EmptyState
+          title={
+            filter === "ALL"
+              ? "No applicants yet"
+              : "No applicants with this status"
+          }
+          description={
+            filter === "ALL"
+              ? "Applicants will appear here once people apply."
+              : undefined
+          }
+        />
       ) : (
         <div className="space-y-3">
           {applicants.map((application) => (
