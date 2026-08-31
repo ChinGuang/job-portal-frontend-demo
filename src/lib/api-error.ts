@@ -50,3 +50,14 @@ export function messageFromBackendError(status: number, body: unknown): string {
   }
   return `Request failed with status ${status}`;
 }
+
+/**
+ * Message for a failed status/lifecycle transition: a 409 means the backend
+ * rejected the move as invalid; otherwise fall back to the error's own message.
+ */
+export function describeStatusChangeError(error: unknown): string {
+  if (error instanceof ApiError && error.status === 409) {
+    return "That status change isn't allowed.";
+  }
+  return error instanceof Error ? error.message : "Something went wrong.";
+}

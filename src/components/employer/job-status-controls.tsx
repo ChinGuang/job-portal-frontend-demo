@@ -3,16 +3,9 @@
 import { useState } from "react";
 import { useArchiveJob, useUpdateJobStatus } from "@/hooks/use-employer-jobs";
 import { statusActions } from "@/lib/job-status";
-import { ApiError } from "@/lib/api-error";
+import { describeStatusChangeError } from "@/lib/api-error";
 import type { Job } from "@/types/job";
 import { Button } from "@/components/ui/button";
-
-function errorText(error: unknown): string {
-  if (error instanceof ApiError && error.status === 409) {
-    return "That status change isn't allowed.";
-  }
-  return error instanceof Error ? error.message : "Something went wrong.";
-}
 
 /** Status-transition buttons + archive action for one job. */
 export function JobStatusControls({ job }: { job: Job }) {
@@ -76,11 +69,11 @@ export function JobStatusControls({ job }: { job: Job }) {
 
       {changeStatus.isError ? (
         <p className="text-sm text-destructive">
-          {errorText(changeStatus.error)}
+          {describeStatusChangeError(changeStatus.error)}
         </p>
       ) : null}
       {archive.isError ? (
-        <p className="text-sm text-destructive">{errorText(archive.error)}</p>
+        <p className="text-sm text-destructive">{describeStatusChangeError(archive.error)}</p>
       ) : null}
     </div>
   );

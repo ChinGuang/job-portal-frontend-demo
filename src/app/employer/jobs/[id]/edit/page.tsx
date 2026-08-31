@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { EmployerPageShell } from "@/components/employer/employer-page-shell";
 import { JobForm } from "@/components/employer/job-form";
 import { JobStatusControls } from "@/components/employer/job-status-controls";
 import { useMyJobs } from "@/hooks/use-employer-jobs";
 import { STATUS_LABELS } from "@/lib/job-status";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -45,8 +47,14 @@ function EditJobBody() {
             Publish, close, reopen, or archive this listing.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <JobStatusControls job={job} />
+          <Button
+            variant="outline"
+            render={<Link href={`/employer/jobs/${job.id}/applicants`} />}
+          >
+            View applicants
+          </Button>
         </CardContent>
       </Card>
     </div>

@@ -43,13 +43,22 @@ function JobRow({ job }: { job: Job }) {
             <JobStatusControls job={job} />
           </div>
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          render={<Link href={`/employer/jobs/${job.id}/edit`} />}
-        >
-          Edit
-        </Button>
+        <div className="flex shrink-0 gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            render={<Link href={`/employer/jobs/${job.id}/applicants`} />}
+          >
+            Applicants
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            render={<Link href={`/employer/jobs/${job.id}/edit`} />}
+          >
+            Edit
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
