@@ -6,6 +6,7 @@ import { useJob } from "@/hooks/use-jobs";
 import { ApiError } from "@/lib/api-error";
 import { formatJobType, formatSalary, toExternalUrl } from "@/lib/jobs";
 import { ApplyPanel } from "@/components/jobs/apply-panel";
+import { EmptyState, ErrorState } from "@/components/common/states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,22 +32,23 @@ export function JobDetail({ id }: { id: string }) {
 
   if (isError || !job) {
     const notFound = error instanceof ApiError && error.status === 404;
-    return (
-      <div className="rounded-lg border border-dashed p-12 text-center">
-        <p className="font-medium">
-          {notFound ? "Job not found" : "Couldn't load this job"}
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {notFound
-            ? "This listing may have been closed or removed."
-            : error instanceof Error
-              ? error.message
-              : "Something went wrong."}
-        </p>
-        <Button variant="outline" className="mt-4" render={<Link href="/" />}>
-          Back to jobs
-        </Button>
-      </div>
+    const backToJobs = (
+      <Button variant="outline" render={<Link href="/" />}>
+        Back to jobs
+      </Button>
+    );
+    return notFound ? (
+      <EmptyState
+        title="Job not found"
+        description="This listing may have been closed or removed."
+        action={backToJobs}
+      />
+    ) : (
+      <ErrorState
+        title="Couldn't load this job"
+        message={error instanceof Error ? error.message : undefined}
+        action={backToJobs}
+      />
     );
   }
 

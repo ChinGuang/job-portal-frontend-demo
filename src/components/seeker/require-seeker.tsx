@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
 import { useCapabilities } from "@/hooks/use-profiles";
+import { CenteredSpinner } from "@/components/common/states";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -12,13 +12,7 @@ import { Button } from "@/components/ui/button";
 export function RequireSeeker({ children }: { children: React.ReactNode }) {
   const { hasJobSeeker, isLoading } = useCapabilities();
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" aria-label="Loading" />
-      </div>
-    );
-  }
+  if (isLoading) return <CenteredSpinner />;
 
   if (!hasJobSeeker) {
     return (
