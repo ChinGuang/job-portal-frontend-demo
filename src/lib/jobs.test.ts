@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  JOB_TYPES,
   JOBS_PAGE_SIZE,
   buildJobsQuery,
   formatJobType,
@@ -7,6 +8,19 @@ import {
   toExternalUrl,
   totalPages,
 } from "./jobs";
+
+describe("JOB_TYPES", () => {
+  it("matches the backend's job-type enum (no TEMPORARY)", () => {
+    // The backend enum has exactly these four; TEMPORARY is not one of them, so
+    // it must not appear as a browse filter option.
+    expect(JOB_TYPES.map((t) => t.value)).toEqual([
+      "FULL_TIME",
+      "PART_TIME",
+      "CONTRACT",
+      "INTERNSHIP",
+    ]);
+  });
+});
 
 describe("buildJobsQuery", () => {
   it("defaults to the first page with limit and zero offset", () => {
