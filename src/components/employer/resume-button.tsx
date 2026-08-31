@@ -19,6 +19,9 @@ export function ResumeButton({ applicationId }: { applicationId: string }) {
     setError(null);
     setPending(true);
     const tab = window.open("about:blank", "_blank");
+    // Sever the opener so the résumé page (served from storage) can't reach
+    // back into the app tab (reverse tabnabbing).
+    if (tab) tab.opener = null;
     try {
       const { resumeUrl } = await getApplicationResumeUrl(applicationId);
       if (tab) tab.location.href = resumeUrl;

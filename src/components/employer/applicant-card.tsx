@@ -6,18 +6,11 @@ import {
   type ReviewApplication,
 } from "@/lib/applicant-review";
 import { APPLICATION_STATUS_META, formatAppliedDate } from "@/lib/applications";
-import { ApiError } from "@/lib/api-error";
+import { describeStatusChangeError } from "@/lib/api-error";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ResumeButton } from "./resume-button";
-
-function transitionError(error: unknown): string {
-  if (error instanceof ApiError && error.status === 409) {
-    return "That status change isn't allowed.";
-  }
-  return error instanceof Error ? error.message : "Something went wrong.";
-}
 
 export function ApplicantCard({
   application,
@@ -54,8 +47,12 @@ export function ApplicantCard({
 
         {profile.skills.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
-            {profile.skills.map((skill) => (
-              <Badge key={skill} variant="outline" className="font-normal">
+            {profile.skills.map((skill, index) => (
+              <Badge
+                key={`${skill}-${index}`}
+                variant="outline"
+                className="font-normal"
+              >
                 {skill}
               </Badge>
             ))}
@@ -99,7 +96,7 @@ export function ApplicantCard({
 
         {changeStatus.isError ? (
           <p className="text-sm text-destructive">
-            {transitionError(changeStatus.error)}
+            {describeStatusChangeError(changeStatus.error)}
           </p>
         ) : null}
       </CardContent>
