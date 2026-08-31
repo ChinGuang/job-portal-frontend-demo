@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { EmployerPageShell } from "@/components/employer/employer-page-shell";
 import { JobStatusControls } from "@/components/employer/job-status-controls";
+import { EmptyState, ErrorState } from "@/components/common/states";
 import { useMyJobs } from "@/hooks/use-employer-jobs";
 import { STATUS_LABELS } from "@/lib/job-status";
 import { formatJobType, formatSalary } from "@/lib/jobs";
@@ -89,18 +90,20 @@ function EmployerJobsContent() {
           <Skeleton className="h-24 w-full" />
         </div>
       ) : isError ? (
-        <p className="text-sm text-destructive">
-          {error instanceof Error ? error.message : "Couldn't load your listings."}
-        </p>
+        <ErrorState
+          title="Couldn't load your listings"
+          message={error instanceof Error ? error.message : undefined}
+        />
       ) : jobs.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
-          <p className="text-muted-foreground">
-            You haven&apos;t created any listings yet.
-          </p>
-          <Button className="mt-4" render={<Link href="/employer/jobs/new" />}>
-            Create your first listing
-          </Button>
-        </div>
+        <EmptyState
+          title="No listings yet"
+          description="Create your first listing to start hiring."
+          action={
+            <Button render={<Link href="/employer/jobs/new" />}>
+              Create your first listing
+            </Button>
+          }
+        />
       ) : (
         <div className="space-y-3">
           {jobs.map((job) => (

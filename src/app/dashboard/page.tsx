@@ -10,6 +10,7 @@ import { ROLE_LABELS, type Role } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/common/states";
 import {
   Card,
   CardContent,
@@ -141,13 +142,11 @@ function DashboardContent() {
       </Card>
 
       {isError ? (
-        <div className="mb-8 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm">
-          <p className="font-medium text-destructive">
-            Couldn&apos;t load your profile status
-          </p>
-          <p className="mt-1 text-muted-foreground">
-            Something went wrong loading your profiles. Please refresh.
-          </p>
+        <div className="mb-8">
+          <ErrorState
+            title="Couldn't load your profile status"
+            message="Something went wrong loading your profiles. Please refresh."
+          />
         </div>
       ) : null}
 

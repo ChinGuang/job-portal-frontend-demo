@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import { useAuth } from "./auth-provider";
+import { CenteredSpinner } from "@/components/common/states";
 
 /**
  * Gate for authenticated pages: while the session resolves it shows a spinner;
@@ -22,13 +22,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
     }
   }, [loading, session, router]);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" aria-label="Loading" />
-      </div>
-    );
-  }
+  if (loading) return <CenteredSpinner />;
 
   if (!session) return null;
 

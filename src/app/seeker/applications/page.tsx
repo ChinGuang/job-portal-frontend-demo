@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { SeekerPageShell } from "@/components/seeker/seeker-page-shell";
+import { EmptyState, ErrorState } from "@/components/common/states";
 import { useMyApplications } from "@/hooks/use-applications";
 import { useJob } from "@/hooks/use-jobs";
 import {
@@ -66,18 +67,18 @@ function ApplicationsContent() {
           <Skeleton className="h-20 w-full" />
         </div>
       ) : isError ? (
-        <p className="text-sm text-destructive">
-          {error instanceof Error ? error.message : "Couldn't load your applications."}
-        </p>
+        <ErrorState
+          title="Couldn't load your applications"
+          message={error instanceof Error ? error.message : undefined}
+        />
       ) : applications.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
-          <p className="text-muted-foreground">
-            You haven&apos;t applied to any jobs yet.
-          </p>
-          <Button className="mt-4" render={<Link href="/" />}>
-            Browse jobs
-          </Button>
-        </div>
+        <EmptyState
+          title="No applications yet"
+          description="When you apply to a job, it'll show up here."
+          action={
+            <Button render={<Link href="/" />}>Browse jobs</Button>
+          }
+        />
       ) : (
         <div className="space-y-3">
           {applications.map((application) => (
