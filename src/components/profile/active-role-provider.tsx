@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -50,15 +51,29 @@ export function ActiveRoleProvider({ children }: { children: React.ReactNode }) 
     }
   }, []);
 
+  const activeRole = resolveActiveRole({ hasJobSeeker, hasEmployer }, stored);
+
+  // Stamp the active role on <html> so the accent tokens in globals.css apply
+  // (teal for job-seeker, indigo for employer). Cleared when there is no role,
+  // so public/logged-out pages keep the neutral base.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (activeRole) root.dataset.role = activeRole;
+    else delete root.dataset.role;
+    return () => {
+      delete root.dataset.role;
+    };
+  }, [activeRole]);
+
   const value = useMemo<ActiveRoleContextValue>(() => {
     const capabilities: ProfileCapabilities = { hasJobSeeker, hasEmployer };
     return {
-      activeRole: resolveActiveRole(capabilities, stored),
+      activeRole,
       setActiveRole,
       canSwitch: hasJobSeeker && hasEmployer,
       capabilities,
     };
-  }, [hasJobSeeker, hasEmployer, stored, setActiveRole]);
+  }, [activeRole, hasJobSeeker, hasEmployer, setActiveRole]);
 
   return (
     <ActiveRoleContext.Provider value={value}>
