@@ -9,12 +9,7 @@
 
 export type JobStatus = "DRAFT" | "PUBLISHED" | "CLOSED" | "ARCHIVED";
 
-export type JobType =
-  | "FULL_TIME"
-  | "PART_TIME"
-  | "CONTRACT"
-  | "INTERNSHIP"
-  | "TEMPORARY";
+export type JobType = "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
 
 /** Employer/company profile shown alongside a listing. */
 export interface EmployerProfileSummary {

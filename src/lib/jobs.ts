@@ -14,7 +14,6 @@ export const JOB_TYPES: { value: JobType; label: string }[] = [
   { value: "PART_TIME", label: "Part-time" },
   { value: "CONTRACT", label: "Contract" },
   { value: "INTERNSHIP", label: "Internship" },
-  { value: "TEMPORARY", label: "Temporary" },
 ];
 
 const JOB_TYPE_LABELS: Record<string, string> = Object.fromEntries(
